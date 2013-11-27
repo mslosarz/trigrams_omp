@@ -4,7 +4,7 @@
 
 using namespace std;
 
-TrigramProcessor::TrigramProcessor(FileInMemoryContainer& input_file, string& lang, StatisticFile& output_file) : _input_file(input_file), _lang(lang), _output_file(output_file)
+TrigramProcessor::TrigramProcessor(FileInMemoryContainer& input_file, string lang, StatisticFile* output_file) : _input_file(input_file), _lang(lang), _output_file(output_file)
 {
 }
 
@@ -14,7 +14,7 @@ TrigramProcessor::~TrigramProcessor()
     _trigrams = NULL;
 }
 
-void TrigramProcessor::calculate_trigrams()
+unordered_map<string, int>* TrigramProcessor::calculate_trigrams()
 {
     unsigned char* text = _input_file.text();
     int text_size = _input_file.text_size();
@@ -27,6 +27,7 @@ void TrigramProcessor::calculate_trigrams()
         local_words[trigram]++;
     }
     _trigrams = merge(threads_words);
+    return _trigrams;
 }
 
 unordered_map<string, int>* TrigramProcessor::merge(vector<unordered_map<string, int>>& threads_words)
@@ -46,5 +47,9 @@ unordered_map<string, int>* TrigramProcessor::merge(vector<unordered_map<string,
 
 void TrigramProcessor::save_statistics_to_file()
 {
-    _output_file.write(*_trigrams, _lang);
+    if(_output_file == NULL)
+    {
+        return;
+    }
+    _output_file->write(*_trigrams, _lang);
 }

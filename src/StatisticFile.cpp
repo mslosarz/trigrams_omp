@@ -1,30 +1,29 @@
 #include "StatisticFile.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
-StatisticFile::StatisticFile(string path, string extension) : _path(path), _extension(extension)
+StatisticFile::StatisticFile(string path, string extension) : _path(path), _extension(extension), _statistics(NULL)
 {}
 
-StatisticFile::~StatisticFile()
-{
-}
-
-unordered_map<string, int>* StatisticFile::read(string& file_name)
+unordered_map<string, int>* StatisticFile::read(string file_name)
 {
     string read_from = _path + file_name + ".dat";
     ifstream file;
     file.open(read_from);
-    unordered_map<string, int>* statistics = new unordered_map<string, int>();
-
-    while(file.eof() == false){
+    _statistics = new unordered_map<string, int>();
+    string line;
+    while(getline(file, line))
+    {
+        stringstream stream(line);
         string key;
         int value;
-        file >> key;
-        file >> value;
-        (*statistics)[key] = value;
+        stream >> key;
+        stream >> value;
+        (*_statistics)[key] = value;
     }
     file.close();
-    return statistics;
+    return _statistics;
 }
 
 void StatisticFile::write(unordered_map<string, int>& statistics, string file_name)

@@ -13,16 +13,16 @@ using namespace std;
 class TrigramProcessor
 {
 public:
-    TrigramProcessor(FileInMemoryContainer& input_file, string& lang, StatisticFile& output_file);
-    void calculate_trigrams();
+    TrigramProcessor(FileInMemoryContainer& input_file, string lang, StatisticFile* output_file = NULL);
+    unordered_map<string, int>* calculate_trigrams();
     void save_statistics_to_file();
     ~TrigramProcessor();
 private:
     FileInMemoryContainer& _input_file;
 
-    string& _lang;
+    string _lang;
 
-    StatisticFile& _output_file;
+    StatisticFile* _output_file;
 
     unordered_map<string, int>* _trigrams;
 

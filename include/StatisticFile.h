@@ -10,12 +10,16 @@ class StatisticFile
 {
 public:
     StatisticFile(string path = "./", string extension = ".dat");
-    unordered_map<string, int>* read(string& file_name);
+    unordered_map<string, int>* read(string file_name);
     void write(unordered_map<string, int>& statistics, string file_name = "out");
-    ~StatisticFile();
+    unordered_map<string, int>* statistics()
+    {
+        return _statistics;
+    }
 private:
     string _path;
     string _extension;
+    unordered_map<string, int>* _statistics;
 };
 
 #endif // STATISTICFILE_H
