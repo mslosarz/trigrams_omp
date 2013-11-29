@@ -9,10 +9,10 @@
 
 using namespace::std;
 
-class TimeCalculator
+class Timer
 {
 public:
-    TimeCalculator() {}
+    Timer() {}
     void start()
     {
         clock_gettime( CLOCK_REALTIME, &tstart);
@@ -23,22 +23,22 @@ public:
         clock_gettime( CLOCK_REALTIME, &tstop);
     }
 
-    void printDuration()
-    {
-        cout << setprecision(16) << durationInMiliseconds() << " ms" << endl;
+    void finish_and_print_duration(){
+    	finish();
+    	print_duration();
     }
 
-    double durationInMiliseconds()
+    void print_duration()
+    {
+        cout << setprecision(16) << duration_in_millis() << " ms" << endl;
+    }
+
+    double duration_in_millis()
     {
         return (
                    ( tstop.tv_sec - tstart.tv_sec )*1e9
                    + ( tstop.tv_nsec - tstart.tv_nsec )
                ) / 1e6;
-    }
-
-    ostream & operator<< (ostream &stream)
-    {
-        return stream << setprecision(16) << durationInMiliseconds() << " ms";
     }
 
 private:

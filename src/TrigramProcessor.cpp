@@ -1,55 +1,85 @@
-#include "TrigramProcessor.h"
-#include "TimeCalculator.h"
+/*
+ * TrigramProcessor.cpp
+ *
+ *  Created on: 29 lis 2013
+ */
+#include <atomic>
+#include <iostream>
+#include <cstring>
 #include <omp.h>
 
-using namespace std;
+#include "TrigramProcessor.h"
 
-TrigramProcessor::TrigramProcessor(FileInMemoryContainer& input_file, string lang, StatisticFile* output_file) : _input_file(input_file), _lang(lang), _output_file(output_file)
-{
+TrigramProcessor::TrigramProcessor(const InMemoryFile& file) :
+		cube_size(255), file(file), max_hit_number(0) {
+	createCube();
 }
 
-TrigramProcessor::~TrigramProcessor()
-{
-    delete _trigrams;
-    _trigrams = NULL;
+void TrigramProcessor::calculate_trigrams() {
+
+	unsigned int text_size = file.get_text_size();
+	char* text = file.get_text();
+	int thread_count = omp_get_max_threads();
+	int max_hit_per_thread[thread_count];
+	memset(max_hit_per_thread, 0, thread_count*sizeof(int));
+
+	#pragma omp parallel for
+	for (unsigned int character = 0; character < text_size / 3; character++) {
+		int index = character * 3;
+		int i = int(text[index]);
+		int j = int(text[index + 1]);
+		int k = int(text[index + 2]);
+		character_cube[i][j][k]++;
+		atomic<int>& val = character_cube[i][j][k];
+		if(max_hit_per_thread[omp_get_thread_num()] < val){
+			max_hit_per_thread[omp_get_thread_num()] = val;
+		}
+	}
+
+	for(int i = 0; i < thread_count; i++){
+		if(max_hit_number < max_hit_per_thread[i]){
+			max_hit_number = max_hit_per_thread[i];
+		}
+	}
+
 }
 
-unordered_map<string, int>* TrigramProcessor::calculate_trigrams()
-{
-    unsigned char* text = _input_file.text();
-    int text_size = _input_file.text_size();
-    vector<unordered_map<string, int>> threads_words(omp_get_max_threads());
-    #pragma omp parallel for
-    for(int i = 0; i < text_size/3; i++)
-    {
-        unordered_map<string, int>& local_words = threads_words[omp_get_thread_num()];
-        string trigram((const char*)text, 3*i, 3);
-        local_words[trigram]++;
-    }
-    _trigrams = merge(threads_words);
-    return _trigrams;
+void TrigramProcessor::createCube() {
+	character_cube = new atomic<int>**[cube_size];
+	for (unsigned int i = 0; i < cube_size; i++) {
+		character_cube[i] = new atomic<int>*[cube_size];
+		for (unsigned int j = 0; j < cube_size; j++) {
+			character_cube[i][j] = new atomic<int> [cube_size];
+			for (unsigned int k = 0; k < cube_size; k++) {
+				character_cube[i][j][k] = 0;
+			}
+		}
+	}
 }
 
-unordered_map<string, int>* TrigramProcessor::merge(vector<unordered_map<string, int>>& threads_words)
-{
-    int thread_num = omp_get_max_threads();
-    unordered_map<string, int>* result = new unordered_map<string, int>();
-    for(int i = 0; i < thread_num; i++)
-    {
-        unordered_map<string, int>& thread_words = threads_words[i];
-        for (auto it = thread_words.begin(); it != thread_words.end(); ++it )
-        {
-            (*result)[it->first] += it->second;
-        }
-    }
-    return result;
+TrigramProcessor::~TrigramProcessor() {
+	if (character_cube != NULL)
+		for (unsigned int i = 0; i < cube_size; i++) {
+			for (unsigned int j = 0; j < cube_size; j++) {
+				delete character_cube[i][j];
+			}
+			delete character_cube[i];
+		}
+	delete character_cube;
+	character_cube = NULL;
 }
 
-void TrigramProcessor::save_statistics_to_file()
-{
-    if(_output_file == NULL)
-    {
-        return;
-    }
-    _output_file->write(*_trigrams, _lang);
+ostream & operator<< (ostream &out, TrigramProcessor &processor){
+	std::atomic<int>*** character_cube = processor.get_character_cube();
+	for(unsigned int i = 0; i<processor.cube_size; i++){
+		for(unsigned int j = 0; j<processor.cube_size; j++){
+			for(unsigned int k = 0; k<processor.cube_size; k++){
+				atomic<int>& val = character_cube[i][j][k];
+				if(val){
+					out << char(i) << char(j) << char(k) << '\t' << val << '\t' << float(val)/processor.get_max_hit_number() << endl;
+				}
+			}
+		}
+	}
+	return out;
 }
