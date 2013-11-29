@@ -41,12 +41,14 @@
 		</Linker>
 		<Unit filename="Makefile" />
 		<Unit filename="include/FileInMemoryContainer.h" />
-		<Unit filename="include/MersenneTwister.h" />
+		<Unit filename="include/LanguageMatcher.h" />
+		<Unit filename="include/MatcherResponse.h" />
 		<Unit filename="include/StatisticFile.h" />
 		<Unit filename="include/TimeCalculator.h" />
 		<Unit filename="include/TrigramProcessor.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/FileInMemoryContainer.cpp" />
+		<Unit filename="src/LanguageMatcher.cpp" />
 		<Unit filename="src/StatisticFile.cpp" />
 		<Unit filename="src/TrigramProcessor.cpp" />
 		<Extensions>

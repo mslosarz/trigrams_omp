@@ -9,14 +9,14 @@
 
 class LanguageMatcher
 {
-    public:
-        LanguageMatcher(string lang, unordered_map<string, int>* lang_statistics);
-        MatcherResponse* matchLanguage(unordered_map<string, int>* file_statistics);
-        ~LanguageMatcher();
-    private:
-        string _lang;
-        unordered_map<string, int>* _lang_statistics;
-        MatcherResponse* _response;
+public:
+    LanguageMatcher(string lang, unordered_map<string, int>* lang_statistics);
+    MatcherResponse* matchLanguage(unordered_map<string, int>* file_statistics);
+    ~LanguageMatcher();
+private:
+    string _lang;
+    unordered_map<string, int>* _lang_statistics;
+    MatcherResponse* _response;
 
 };
 

@@ -40,9 +40,9 @@ OBJDIR_RELEASE = obj/Release
 DEP_RELEASE = 
 OUT_RELEASE = bin/Release/trigrams_omp
 
-OBJ_DEBUG = $(OBJDIR_DEBUG)/main.o $(OBJDIR_DEBUG)/src/FileInMemoryContainer.o $(OBJDIR_DEBUG)/src/StatisticFile.o $(OBJDIR_DEBUG)/src/TrigramProcessor.o
+OBJ_DEBUG = $(OBJDIR_DEBUG)/main.o $(OBJDIR_DEBUG)/src/FileInMemoryContainer.o $(OBJDIR_DEBUG)/src/LanguageMatcher.o $(OBJDIR_DEBUG)/src/StatisticFile.o $(OBJDIR_DEBUG)/src/TrigramProcessor.o
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/main.o $(OBJDIR_RELEASE)/src/FileInMemoryContainer.o $(OBJDIR_RELEASE)/src/StatisticFile.o $(OBJDIR_RELEASE)/src/TrigramProcessor.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/main.o $(OBJDIR_RELEASE)/src/FileInMemoryContainer.o $(OBJDIR_RELEASE)/src/LanguageMatcher.o $(OBJDIR_RELEASE)/src/StatisticFile.o $(OBJDIR_RELEASE)/src/TrigramProcessor.o
 
 all: debug release
 
@@ -65,6 +65,9 @@ $(OBJDIR_DEBUG)/main.o: main.cpp
 
 $(OBJDIR_DEBUG)/src/FileInMemoryContainer.o: src/FileInMemoryContainer.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/FileInMemoryContainer.cpp -o $(OBJDIR_DEBUG)/src/FileInMemoryContainer.o
+
+$(OBJDIR_DEBUG)/src/LanguageMatcher.o: src/LanguageMatcher.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/LanguageMatcher.cpp -o $(OBJDIR_DEBUG)/src/LanguageMatcher.o
 
 $(OBJDIR_DEBUG)/src/StatisticFile.o: src/StatisticFile.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/StatisticFile.cpp -o $(OBJDIR_DEBUG)/src/StatisticFile.o
@@ -95,6 +98,9 @@ $(OBJDIR_RELEASE)/main.o: main.cpp
 
 $(OBJDIR_RELEASE)/src/FileInMemoryContainer.o: src/FileInMemoryContainer.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/FileInMemoryContainer.cpp -o $(OBJDIR_RELEASE)/src/FileInMemoryContainer.o
+
+$(OBJDIR_RELEASE)/src/LanguageMatcher.o: src/LanguageMatcher.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/LanguageMatcher.cpp -o $(OBJDIR_RELEASE)/src/LanguageMatcher.o
 
 $(OBJDIR_RELEASE)/src/StatisticFile.o: src/StatisticFile.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/StatisticFile.cpp -o $(OBJDIR_RELEASE)/src/StatisticFile.o
