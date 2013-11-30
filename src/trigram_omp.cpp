@@ -35,19 +35,22 @@ int main(int argc, char **argv) {
 	processor.calculate_trigrams();
 	timer.finish_and_print_duration();
 
-	cout << "Trigrams saved in: " << endl;
-	timer.start();
-//	cout << processor;
-	timer.finish_and_print_duration();
-
+	ofstream file;
 
 	StatisticsFile statistic(processor);
-	fstream file;
 	file.open("out");
-
 	file << statistic;
-
 	file.close();
+
+	StatisticsFile stats;
+	cout << "Reading trigrams from statistic file in: " << endl;
+	ifstream infile;
+	infile.open("out");
+	infile >> stats;
+	infile.close();
+
+	cout << "Trigrams: " << stats.get_statistics().size() << endl;
+
 	return 0;
 }
 

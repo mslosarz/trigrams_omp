@@ -21,7 +21,7 @@ public:
 	StatisticsFile();
 	StatisticsFile(TrigramProcessor& processor);
 
-	friend fstream & operator<<(fstream &out, StatisticsFile &statistics);
+	friend ofstream & operator<<(ofstream &out, StatisticsFile &statistics);
 
 	bool is_writable() {
 		return processor != NULL;
@@ -32,7 +32,7 @@ public:
 	}
 
 	vector<StatisticsItem>& get_statistics();
-	friend fstream & operator >>(fstream &in, StatisticsFile& statistics);
+	friend ifstream & operator >>(ifstream &in, StatisticsFile& statistics);
 
 	atomic<int>*** get_cube() {
 		return processor->get_character_cube();
@@ -57,17 +57,18 @@ public:
 	friend class StatisticsFile;
 
 	StatisticsItem() :
-			key(NULL), occurs(0), normalized(0.0f) {
+			key(""), occurs(0), normalized(0.0f) {
+		key.resize(4);
 	}
 
-	inline string get_key() {
+	inline string &get_key() {
 		return key;
 	}
-	inline int get_occurs() {
+	inline int &get_occurs() {
 		return occurs;
 	}
 
-	inline int get_normalized() {
+	inline float &get_normalized() {
 		return normalized;
 	}
 
@@ -86,7 +87,7 @@ public:
 	~StatisticsItem() {
 	}
 
-	friend fstream & operator >>(fstream &in, StatisticsItem& item);
+	friend string & operator >>(string &in, StatisticsItem& item);
 private:
 	string key;
 	int occurs;

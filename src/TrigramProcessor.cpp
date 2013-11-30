@@ -30,7 +30,7 @@ void TrigramProcessor::calculate_trigrams() {
 		int j = int(text[index + 1]);
 		int k = int(text[index + 2]);
 
-		bool hasNoValue = !(i || j || k);
+		bool hasNoValue = (i == 0 || j == 0 || k == 0);
 		int containsOnlySpaces = i == ' ' && j == ' ' && k == ' ';
 
 		if (hasNoValue || containsOnlySpaces) {

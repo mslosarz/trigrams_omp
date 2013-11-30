@@ -6,6 +6,7 @@
 
 #include <atomic>
 #include <string>
+#include <sstream>
 
 #include "StatisticsFile.h"
 
@@ -26,7 +27,7 @@ StatisticsFile::~StatisticsFile() {
 	statistics = NULL;
 }
 
-fstream & operator<<(fstream &out, StatisticsFile &statistics) {
+ofstream & operator<<(ofstream &out, StatisticsFile &statistics) {
 	if (statistics.is_writable()) {
 		atomic<int>*** cube = statistics.get_cube();
 		unsigned int cube_size = statistics.get_cube_size();
@@ -49,29 +50,23 @@ fstream & operator<<(fstream &out, StatisticsFile &statistics) {
 	return out;
 }
 
-fstream & operator >>(fstream &in, StatisticsFile& statistics){
+ifstream & operator >> (ifstream &in, StatisticsFile& statistics){
 	if (statistics.is_loaded() == false) {
-		vector<StatisticsItem> results = statistics.get_statistics();
-		while(in.eof() == false){
+		vector<StatisticsItem>& results = statistics.get_statistics();
+		string line;
+		while(getline(in, line)){
 			StatisticsItem item;
-			in >> item;
+			line >> item;
 			results.push_back(item);
 		}
 	}
 	return in;
 }
 
-fstream & operator >>(fstream &in, StatisticsItem& item){
-	string key;
-	int occurs;
-	float normalized;
-
-	in >> key;
-	in >> occurs;
-	in >> normalized;
-
-	item.set_key(key);
-	item.set_occurs(occurs);
-	item.set_normalized(normalized);
+string & operator >>(string &in, StatisticsItem& item){
+	stringstream ss;
+	ss << in;
+	ss.read(&item.get_key()[0], 3);
+	ss >> item.get_occurs() >> item.get_normalized();
 	return in;
 }
