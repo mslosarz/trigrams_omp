@@ -21,9 +21,9 @@ void TrigramProcessor::calculate_trigrams() {
 	char* text = file.get_text();
 	int thread_count = omp_get_max_threads();
 	int max_hit_per_thread[thread_count];
-	memset(max_hit_per_thread, 0, thread_count*sizeof(int));
+	memset(max_hit_per_thread, 0, thread_count * sizeof(int));
 
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (unsigned int character = 0; character < text_size / 3; character++) {
 		int index = character * 3;
 		int i = int(text[index]);
@@ -38,13 +38,13 @@ void TrigramProcessor::calculate_trigrams() {
 		}
 		character_cube[i][j][k]++;
 		atomic<int>& val = character_cube[i][j][k];
-		if(max_hit_per_thread[omp_get_thread_num()] < val){
+		if (max_hit_per_thread[omp_get_thread_num()] < val) {
 			max_hit_per_thread[omp_get_thread_num()] = val;
 		}
 	}
 
-	for(int i = 0; i < thread_count; i++){
-		if(max_hit_number < max_hit_per_thread[i]){
+	for (int i = 0; i < thread_count; i++) {
+		if (max_hit_number < max_hit_per_thread[i]) {
 			max_hit_number = max_hit_per_thread[i];
 		}
 	}
@@ -76,14 +76,18 @@ TrigramProcessor::~TrigramProcessor() {
 	character_cube = NULL;
 }
 
-ostream & operator<< (ostream &out, TrigramProcessor &processor){
+ostream & operator<<(ostream &out, TrigramProcessor &processor) {
 	std::atomic<int>*** character_cube = processor.get_character_cube();
-	for(unsigned int i = 0; i<processor.cube_size; i++){
-		for(unsigned int j = 0; j<processor.cube_size; j++){
-			for(unsigned int k = 0; k<processor.cube_size; k++){
+	const unsigned int cube_size = processor.cube_size;
+	int max_hit_number = processor.get_max_hit_number();
+	for (unsigned int i = 0; i < cube_size; i++) {
+		for (unsigned int j = 0; j < cube_size; j++) {
+			for (unsigned int k = 0; k < cube_size; k++) {
 				atomic<int>& val = character_cube[i][j][k];
-				if(val){
-					out << char(i) << char(j) << char(k) << '\t' << val << '\t' << float(val)/processor.get_max_hit_number() << endl;
+				if (val) {
+					out << char(i) << char(j) << char(k) << '\t' << val << '\t'
+							<< float(val) / max_hit_number
+							<< endl;
 				}
 			}
 		}

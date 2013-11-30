@@ -2,3 +2,4 @@
 /Release/trigrams_omp
 *.o
 *.d
+/Release

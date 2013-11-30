@@ -10,8 +10,7 @@
 #include "InMemoryFile.h"
 #include "Timer.h"
 #include "TrigramProcessor.h"
-
-#include <fstream>
+#include "StatisticsFile.h"
 
 using namespace std;
 
@@ -38,8 +37,17 @@ int main(int argc, char **argv) {
 
 	cout << "Trigrams saved in: " << endl;
 	timer.start();
-	cout << processor;
+//	cout << processor;
 	timer.finish_and_print_duration();
+
+
+	StatisticsFile statistic(processor);
+	fstream file;
+	file.open("out");
+
+	file << statistic;
+
+	file.close();
 	return 0;
 }
 
