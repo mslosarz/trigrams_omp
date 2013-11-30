@@ -23,7 +23,7 @@ void TrigramProcessor::calculate_trigrams() {
 	int max_hit_per_thread[thread_count];
 	memset(max_hit_per_thread, 0, thread_count * sizeof(int));
 
-#pragma omp parallel for
+	#pragma omp parallel for
 	for (unsigned int character = 0; character < text_size / 3; character++) {
 		int index = character * 3;
 		int i = int(text[index]);
@@ -31,7 +31,7 @@ void TrigramProcessor::calculate_trigrams() {
 		int k = int(text[index + 2]);
 
 		bool hasNoValue = (i == 0 || j == 0 || k == 0);
-		int containsOnlySpaces = i == ' ' && j == ' ' && k == ' ';
+		bool containsOnlySpaces = i == ' ' && j == ' ' && k == ' ';
 
 		if (hasNoValue || containsOnlySpaces) {
 			continue;

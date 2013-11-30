@@ -18,8 +18,8 @@ class StatisticsItem;
 
 class StatisticsFile {
 public:
-	StatisticsFile();
-	StatisticsFile(TrigramProcessor& processor);
+	StatisticsFile(string lang = "unknown");
+	StatisticsFile(TrigramProcessor& processor, string lang = "unknown");
 
 	friend ofstream & operator<<(ofstream &out, StatisticsFile &statistics);
 
@@ -31,8 +31,24 @@ public:
 		return statistics->size() > 0;
 	}
 
-	vector<StatisticsItem>& get_statistics();
+	string get_lang() {
+		return lang;
+	}
+
+	void set_lang(string lang) {
+		this->lang = lang;
+	}
+
+	void set_processor(TrigramProcessor* processor) {
+		if (processor != NULL) {
+			this->processor = processor;
+		}
+	}
+
+	vector<StatisticsItem*>& get_statistics();
 	friend ifstream & operator >>(ifstream &in, StatisticsFile& statistics);
+	friend TrigramProcessor& operator >>(TrigramProcessor&processor,
+			StatisticsFile& statistics);
 
 	atomic<int>*** get_cube() {
 		return processor->get_character_cube();
@@ -48,8 +64,9 @@ public:
 
 	~StatisticsFile();
 private:
-	vector<StatisticsItem>* statistics;
+	vector<StatisticsItem*>* statistics;
 	TrigramProcessor* processor;
+	string lang;
 };
 
 class StatisticsItem {
