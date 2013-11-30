@@ -5,18 +5,21 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/InMemoryFile.cpp \
+../src/LanguageMatcher.cpp \
 ../src/StatisticsFile.cpp \
 ../src/TrigramProcessor.cpp \
 ../src/trigram_omp.cpp 
 
 OBJS += \
 ./src/InMemoryFile.o \
+./src/LanguageMatcher.o \
 ./src/StatisticsFile.o \
 ./src/TrigramProcessor.o \
 ./src/trigram_omp.o 
 
 CPP_DEPS += \
 ./src/InMemoryFile.d \
+./src/LanguageMatcher.d \
 ./src/StatisticsFile.d \
 ./src/TrigramProcessor.d \
 ./src/trigram_omp.d 
