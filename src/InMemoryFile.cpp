@@ -38,11 +38,11 @@ unsigned int InMemoryFile::get_files_size(vector<ifstream>& files) {
 }
 
 void InMemoryFile::read_files_content(vector<ifstream>& files) {
-	char* text_pointer = text;
+	char* character = text;
 	for (unsigned int i = 0; i < files.size(); i++) {
-		while (files[i] >> (*text_pointer)) {
-			(*text_pointer) = replace_unsupported(*text_pointer);
-			text_pointer++;
+		while (files[i] >> (*character)) {
+			(*character) = replace_unsupported(*character);
+			character++;
 		}
 	}
 }
