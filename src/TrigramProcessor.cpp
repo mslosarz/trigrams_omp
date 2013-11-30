@@ -11,7 +11,7 @@
 #include "TrigramProcessor.h"
 
 TrigramProcessor::TrigramProcessor(const InMemoryFile& file) :
-		cube_size(255), file(file), max_hit_number(0) {
+		cube_size(129), file(file), max_hit_number(0) {
 	createCube();
 }
 
@@ -29,6 +29,13 @@ void TrigramProcessor::calculate_trigrams() {
 		int i = int(text[index]);
 		int j = int(text[index + 1]);
 		int k = int(text[index + 2]);
+
+		bool hasNoValue = !(i || j || k);
+		int containsOnlySpaces = i == ' ' && j == ' ' && k == ' ';
+
+		if (hasNoValue || containsOnlySpaces) {
+			continue;
+		}
 		character_cube[i][j][k]++;
 		atomic<int>& val = character_cube[i][j][k];
 		if(max_hit_per_thread[omp_get_thread_num()] < val){
