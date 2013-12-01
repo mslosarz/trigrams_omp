@@ -38,7 +38,7 @@ ofstream & operator<<(ofstream &out, StatisticsFile &statistics) {
 	if (statistics.is_writable()) {
 		atomic<int>*** cube = statistics.get_cube();
 		unsigned int cube_size = statistics.get_cube_size();
-		int max_hit_number = statistics.get_max_hit_number();
+		int hit_number = statistics.get_hit_number();
 
 		for (unsigned int i = 0; i < cube_size; i++) {
 			for (unsigned int j = 0; j < cube_size; j++) {
@@ -46,7 +46,7 @@ ofstream & operator<<(ofstream &out, StatisticsFile &statistics) {
 					atomic<int>& val = cube[i][j][k];
 					if (val) {
 						out << char(i) << char(j) << char(k) << '\t' << val
-								<< '\t' << float(val) / max_hit_number << endl;
+								<< '\t' << float(val) / hit_number << endl;
 					}
 				}
 			}
@@ -75,19 +75,20 @@ TrigramProcessor& operator >>(TrigramProcessor &processor,
 		vector<StatisticsItem*>& results = statistics.get_statistics();
 		atomic<int>*** cube = processor.get_character_cube();
 		unsigned int cube_size = processor.cube_size;
-		int max_hit_number = processor.get_max_hit_number();
+		int hit_number = processor.get_hit_number();
 
 		for (unsigned int i = 0; i < cube_size; i++) {
 			for (unsigned int j = 0; j < cube_size; j++) {
 				for (unsigned int k = 0; k < cube_size; k++) {
-					StatisticsItem* item = new StatisticsItem();
 					atomic<int>& val = cube[i][j][k];
-					item->get_key().push_back(i);
-					item->get_key().push_back(j);
-					item->get_key().push_back(k);
-					item->get_occurs() = val;
-					item->get_normalized() = float(val) / max_hit_number;
-					results.push_back(item);
+					if (val) {
+						StatisticsItem* item = new StatisticsItem();
+						char t[4] = {char(i), char(j), char(k), 0};
+						item->set_trigram(t);
+						item->set_occurs(val);
+						item->set_normalized(float(val) / hit_number);
+						results.push_back(item);
+					}
 				}
 			}
 		}
@@ -97,8 +98,11 @@ TrigramProcessor& operator >>(TrigramProcessor &processor,
 
 string & operator >>(string &in, StatisticsItem& item) {
 	stringstream ss;
+	char trigram[4] = {0};
+	int occurs;
+	float normalized;
 	ss << in;
-	ss.read(&item.get_key()[0], 3);
-	ss >> item.get_occurs() >> item.get_normalized();
+	ss >> trigram >> occurs >> normalized;
+	item.set_trigram(trigram); item.set_occurs(occurs); item.set_normalized(normalized);
 	return in;
 }

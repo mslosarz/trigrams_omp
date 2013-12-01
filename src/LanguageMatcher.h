@@ -21,6 +21,9 @@ public:
 	vector<MatcherResponse*>& match_langs();
 	~LanguageMatcher();
 private:
+	MatcherResponse* match(StatisticsFile& known_lang, StatisticsFile& unknown_lang);
+	vector<pair<int, int> > merge(vector<vector<pair<int, int> > >& partial_result);
+
 	vector<StatisticsFile>& known_langs;
 	StatisticsFile& unknown_lang;
 	vector<MatcherResponse*>* response;
@@ -28,7 +31,7 @@ private:
 
 class MatcherResponse {
 public:
-	MatcherResponse(string lang) : lang(lang), probability(.0f){
+	MatcherResponse(string lang, float probability = 0.0f) : lang(lang), probability(probability){
 	}
 
 	~MatcherResponse(){

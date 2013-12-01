@@ -58,8 +58,8 @@ public:
 		return processor->cube_size;
 	}
 
-	int get_max_hit_number() {
-		return processor->get_max_hit_number();
+	int get_hit_number() {
+		return processor->get_hit_number();
 	}
 
 	~StatisticsFile();
@@ -73,24 +73,26 @@ class StatisticsItem {
 public:
 	friend class StatisticsFile;
 
-	StatisticsItem() :
-			key(""), occurs(0), normalized(0.0f) {
-		key.resize(4);
+	StatisticsItem() : occurs(0), normalized(0.0f) {
+		key[3] = '\0';
 	}
 
-	inline string &get_key() {
+	inline void set_trigram(char t[4]){
+		for(unsigned int i = 0; i < 4; i++){
+			t[i] ? key[i] = t[i] : key[i] = ' ';
+		}
+	}
+
+	inline char* get_trigram(){
 		return key;
 	}
-	inline int &get_occurs() {
+
+	inline int get_occurs() {
 		return occurs;
 	}
 
-	inline float &get_normalized() {
+	inline float get_normalized() {
 		return normalized;
-	}
-
-	inline void set_key(string key) {
-		this->key = key;
 	}
 
 	inline void set_occurs(int occurs) {
@@ -106,7 +108,7 @@ public:
 
 	friend string & operator >>(string &in, StatisticsItem& item);
 private:
-	string key;
+	char key[4];
 	int occurs;
 	float normalized;
 };

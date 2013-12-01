@@ -22,15 +22,15 @@ public:
 		return character_cube;
 	}
 
-	inline int get_max_hit_number(){
-		return max_hit_number;
+	inline int get_hit_number(){
+		return hit_number;
 	}
 
 	~TrigramProcessor();
 private:
 	friend ostream & operator<<(ostream &out, TrigramProcessor &processor);
 	const InMemoryFile& file;
-	int max_hit_number;
+	int hit_number;
 
 	atomic<int>*** character_cube;
 
