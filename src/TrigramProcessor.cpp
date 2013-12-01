@@ -19,7 +19,6 @@ void TrigramProcessor::calculate_trigrams() {
 
 	unsigned int text_size = file.get_text_size();
 	char* text = file.get_text();
-	int thread_count = omp_get_max_threads();
 	unsigned int hit = 0;
 	#pragma omp parallel for reduction(+ : hit)
 	for (unsigned int character = 0; character < text_size / 3; character++) {

@@ -33,26 +33,18 @@ MatcherResponse* LanguageMatcher::match(StatisticsFile& known_lang,
 	unsigned int known_size = known_stats.size();
 	unsigned int unknown_size = unknown_stats.size();
 
-#pragma omp parallel for
-	for (unsigned int i = 0; i < known_size; i++) {
-		char *kt = known_stats[i]->get_trigram();
-		for (unsigned int j = 0; j < unknown_size; j++) {
-			char* ut = unknown_stats[j]->get_trigram();
-			if(kt[0] == ut[0] && kt[1] == ut[0] && kt[2] == ut[2]){
-				pair<int, int> p(i, j);
-				partial_result[omp_get_thread_num()].push_back(p);
-			}
-		}
-	}
-
-	vector<pair<int, int> > result = merge(partial_result);
-
 	float global_error = .0f;
 #pragma omp parallel for reduction(+ : global_error)
-	for (unsigned int i = 0; i < partial_result.size(); i++) {
-		pair<int, int> index = result[i];
-		float error = known_stats[index.first]->get_normalized()
-				- unknown_stats[result[i].second]->get_normalized();
+	for (unsigned int j = 0; j < unknown_size; j++) {
+		char* ut = unknown_stats[j]->get_trigram();
+		float error = unknown_stats[j]->get_normalized();
+		for (unsigned int i = 0; i < known_size; i++) {
+			char *kt = known_stats[i]->get_trigram();
+			if (kt[0] == ut[0] && kt[1] == ut[0] && kt[2] == ut[2]) {
+				error -= known_stats[i]->get_normalized();
+				break;
+			}
+		}
 		error *= error;
 		global_error += error;
 	}

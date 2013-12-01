@@ -52,7 +52,7 @@ void create_statistics(int argc, char**argv) {
 }
 
 bool sort_responses(MatcherResponse* i, MatcherResponse* j) {
-	return (i->get_probability() < j->get_probability());
+	return (i->get_probability() > j->get_probability());
 }
 
 void recognize_lang(int argc, char**argv, vector<string>& known_langs) {
